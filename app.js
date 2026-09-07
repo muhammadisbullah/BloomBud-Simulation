@@ -854,9 +854,39 @@ let sleepPulsePhase = 0;
 // smooth avoidance vector computed from hazardous LiDAR hits
 let hazardAvoidance = new THREE.Vector3();
 // WebSocket client to an external Python AI server (optional)
-let ws = null;
+let ws = new WebSocket('wss://bloombud-simulation.onrender.com');
 let wsConnected = false;
 let hazardAvoidanceServer = null;
+ws.onopen = () => {
+    console.log('Connected to Render AI Server');
+    wsConnected = true;
+};
+
+ws.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
+        // Sesuaikan variabel di bawah dengan logika AI server kamu
+        if (data.avoidance_vector) {
+            hazardAvoidanceServer = new THREE.Vector3(
+                data.avoidance_vector.x,
+                data.avoidance_vector.y,
+                data.avoidance_vector.z
+            );
+        }
+    } catch (e) {
+        console.error("Error parsing AI data:", e);
+    }
+};
+
+ws.onerror = (error) => {
+    console.error('WebSocket Error:', error);
+    wsConnected = false;
+};
+
+ws.onclose = () => {
+    console.log('Disconnected from AI Server');
+    wsConnected = false;
+};
 let serverTimestamp = 0;
 const sensorCanvas = document.getElementById('sensor-canvas');
 const sensorContext = sensorCanvas ? sensorCanvas.getContext('2d') : null;
@@ -927,7 +957,11 @@ function drawSensorPov(rawHits, hazardRays, nearestHazardDist, riskValue) {
 }
 function connectAIServer() {
   try {
-    ws = new WebSocket('ws://localhost:8765');
+    const socketUrl = window.location.hostname === 'localhost' 
+    ? 'ws://localhost:8765' 
+    : 'wss://bloombud-simulation.onrender.com';
+
+    ws = new WebSocket(socketUrl);
     ws.addEventListener('open', () => { wsConnected = true; console.log('AI WS connected'); });
     ws.addEventListener('close', () => { wsConnected = false; console.log('AI WS closed'); setTimeout(connectAIServer, 1000); });
     ws.addEventListener('message', (ev) => {
