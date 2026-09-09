@@ -32,12 +32,36 @@
     <br>
     Play Bloom: <button id="play-btn">Play</button>
     Speed: <input id="bloom-speed" type="range" min="0.1" max="2" step="0.1" value="1">
+    <!-- ... existing code ... -->
+
+   <div id="preorder-section" class="preorder-container">
+  <div class="preorder-content">
+    <h3>Interested in BloomBud? 🌸</h3>
+    <p>We are now accepting registrations. <br><strong>Pre-order</strong> for the limited edition!</p>
+    
+    <div class="preorder-actions">
+      <!-- Butang YES (Neon Gradient + Glow Effect) -->
+      <button onclick="window.open('https://forms.gle/D112L8YnwBkRRust8', '_blank')" class="btn-yes">
+        Yes, I am interested! 🌸
+      </button>
+      <!-- Butang NO (Outline Modern) -->
+      <button onclick="document.getElementById('preorder-section').style.display='none'" class="btn-no">
+        Maybe later
+      </button>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ... rest of code ... -->
   </div>
   <div id="sensor-panel">
     <div class="sensor-title">BLOOMBUD SENSOR POV</div>
     <canvas id="sensor-canvas" width="280" height="190"></canvas>
     <div id="sensor-readout">Waiting for sensor data...</div>
   </div>
+  
   <div id="hud" style="position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,0.6); color:#fff; padding:8px; border-radius:6px; font-family:monospace; font-size:12px;">
     <div>Altitude: <span id="hud-alt">0.0</span>m</div>
     <div>Speed: <span id="hud-speed">0.0</span> m/s</div>

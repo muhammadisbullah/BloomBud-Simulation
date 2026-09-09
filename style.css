@@ -1,0 +1,98 @@
+/* Container Popup Utama */
+.preorder-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 340px;
+    background: rgba(18, 22, 32, 0.92); /* Latar belakang gelap lutsinar */
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    border-left: 4px solid #00f2fe;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 1000;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.preorder-content h3 {
+    margin: 0 0 8px 0;
+    color: #4facfe;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.preorder-content p {
+    margin: 0 0 18px 0;
+    color: #43e97b;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Susunan Butang */
+.preorder-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* --- BUTANG YES (Cyber Neon Gradient) --- */
+.btn-yes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: inherit;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    border-radius: 20px; /* Lengkungan penuh (Pill shape) */
+    
+    /* Warna kecunan cyan ke merah jambu */
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 40%, #ff0844 100%);
+    background-size: 200% auto;
+    
+    /* Kesan Cahaya (Glow) */
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.5), 0 0 25px rgba(255, 8, 68, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-yes:hover {
+    background-position: right center; /* Animasi pergerakan warna */
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.8), 0 0 35px rgba(255, 8, 68, 0.6);
+    transform: translateY(-2px);
+}
+
+/* --- BUTANG NO (Outline Neon) --- */
+.btn-no {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: inherit;
+    color: #43e97b;
+    background: transparent;
+    border: 1.5px solid #43e97b;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.btn-no:hover {
+    background: rgba(67, 233, 123, 0.15);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(67, 233, 123, 0.4);
+    border-color: #00f2fe;
+    transform: translateY(-2px);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
