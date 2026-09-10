@@ -61,6 +61,21 @@ class BedtimeController:
             "bloom_action": action,
         }
 
+# Tambahkan variabel global untuk menyimpan hitungan
+maybe_later_count = 0
+
+async def handler(websocket, path):
+    global maybe_later_count
+    
+    async for message in websocket:
+        data = json.loads(message)
+        
+        # Cek jika pesan adalah data analytics
+        if data.get('type') == 'analytics' and data.get('event') == 'click_maybe_later':
+            maybe_later_count += 1
+            print(f"📊 ANALYTICS: 'Maybe Later' clicked! Total: {maybe_later_count}")
+            continue # Jangan proses sebagai data LiDAR
+
 
 async def handle(ws):
     client_id = id(ws)

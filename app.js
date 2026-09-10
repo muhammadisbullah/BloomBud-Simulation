@@ -1166,6 +1166,36 @@ function updateFan(dt = 1.0) {
   blades.rotation.y += fanSpeed * dt; // rotate blades
 }
 
+
+function trackMaybeLater() {
+    console.log("Maybe Later clicked");
+
+    // 1. CARI DAN TUTUP JENDELA SEGERA
+    // Kita cari berdasarkan class atau id yang mungkin kamu gunakan
+    const section = document.querySelector('.preorder-section') || 
+                    document.getElementById('preorder-section') ||
+                    document.querySelector('.preorder-container');
+
+    if (section) {
+        section.style.display = 'none';
+        console.log("UI hidden successfully");
+    } else {
+        console.error("Could not find preorder section element!");
+    }
+
+    // 2. KIRIM ANALYTICS (Gunakan try-catch agar tidak merusak fungsi tutup)
+    try {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                type: 'analytics',
+                event: 'click_maybe_later'
+            }));
+        }
+    } catch (err) {
+        console.log("Analytics failed, but UI is already closed.");
+    }
+}
+
 // Wire up UI controls for Bloom play/pause and speed
 const playBtn = document.getElementById('play-btn');
 const speedSlider = document.getElementById('bloom-speed');
@@ -1523,3 +1553,10 @@ function animate() {
 
 // Start the custom animate loop
 animate();
+
+window.trackMaybeLater = function() {
+    console.log("Tombol diklik!");
+    // Logika kirim ke websocket...
+    const el = document.getElementById('preorder-section');
+    if (el) el.style.display = 'none';
+};
