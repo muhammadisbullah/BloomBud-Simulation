@@ -62,19 +62,33 @@ class BedtimeController:
         }
 
 # Tambahkan variabel global untuk menyimpan hitungan
-maybe_later_count = 0
+import asyncpg # Pastikan tambah 'asyncpg' dalam requirements.txt
+import os
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 async def handler(websocket, path):
-    global maybe_later_count
-    
     async for message in websocket:
         data = json.loads(message)
         
-        # Cek jika pesan adalah data analytics
         if data.get('type') == 'analytics' and data.get('event') == 'click_maybe_later':
-            maybe_later_count += 1
-            print(f"📊 ANALYTICS: 'Maybe Later' clicked! Total: {maybe_later_count}")
-            continue # Jangan proses sebagai data LiDAR
+            # Simpan ke PostgreSQL
+            conn = await asyncpg.connect(DATABASE_URL)
+            try:
+                # Update count atau masukkan row baru jika belum ada
+                await conn.execute('''
+                    INSERT INTO analytics (event_name, count) 
+                    VALUES ('maybe_later', 1)
+                    ON CONFLICT (event_name) 
+                    DO UPDATE SET count = analytics.count + 1
+                ''')
+                
+                # Ambil nilai terbaru untuk dipaparkan di log
+                new_count = await conn.fetchval("SELECT count FROM analytics WHERE event_name = 'maybe_later'")
+                print(f"📊 DATABASE UPDATED: Total 'Maybe Later' is now {new_count}")
+            finally:
+                await conn.close()
+            continue
 
 
 async def handle(ws):
