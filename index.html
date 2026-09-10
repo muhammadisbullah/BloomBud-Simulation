@@ -34,7 +34,7 @@
     Speed: <input id="bloom-speed" type="range" min="0.1" max="2" step="0.1" value="1">
     <!-- ... existing code ... -->
 
-   <div id="preorder-section" class="preorder-container">
+   <div id="preorder-section" class="preorder-section">
   <div class="preorder-content">
     <h3>Interested in BloomBud? 🌸</h3>
     <p>We are now accepting registrations. <br><strong>Pre-order</strong> for the limited edition!</p>
@@ -45,7 +45,7 @@
         Yes, I am interested! 🌸
       </button>
       <!-- Butang NO (Outline Modern) -->
-      <button onclick="document.getElementById('preorder-section').style.display='none'" class="btn-no">
+      <button onclick="trackMaybeLater()" class="btn-no">
         Maybe later
       </button>
     </div>
