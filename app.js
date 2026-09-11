@@ -19,21 +19,35 @@ window.addEventListener('keydown', (e) => {
   if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyR', 'KeyF', 'KeyI', 'KeyJ', 'KeyK', 'KeyL', 'KeyU', 'KeyO', 'KeyP'].includes(e.code)) {
     e.preventDefault();
   }
-  // toggle camera follow with 'c'
+  
+  // Toggle camera follow dengan 'c'
   if (e.key.toLowerCase() === 'c') cameraFollow = !cameraFollow;
+  
+  // 'P' TOGGLE: BANGUN ATAU TIDUR AUTOMATIK
   if (e.key.toLowerCase() === 'p' && !e.repeat) {
-    personManualMode = !personManualMode;
-    if (personManualMode) {
-      personSleepState = 'manual';
+    if (personSleepState === 'sleeping' || personSleepState === 'walking_to_bed' || personSleepState === 'getting_into_bed') {
+      // PROSES BANGUN DARI KATIL
+      personSleepState = 'getting_up';
       personSleepTimer = 0;
       isSleepMode = false;
       playBloom = true;
       bloomLight.intensity = 0.6;
     } else {
+      // PROSES BERJALAN & TIDUR DI KATIL
       personSleepState = 'walking_to_bed';
       personSleepTimer = 0;
+      personManualMode = false;
     }
   }
+
+  // Toggle manual control mode dengan 'm'
+  if (e.key.toLowerCase() === 'm' && !e.repeat) {
+    personManualMode = !personManualMode;
+    if (personManualMode) {
+      personSleepState = 'manual';
+    }
+  }
+
   // space toggles bloom play/pause
   if (e.key === ' ') { playBloom = !playBloom; e.preventDefault(); }
 });
@@ -320,13 +334,22 @@ person.scale.setScalar(1.35);
 person.userData = { isPerson: true, hazard: true };
 person.children.forEach(child => { child.userData.hazard = true; });
 scene.add(person);
+
+const defaultPersonPos = new THREE.Vector3(3.8, -2.95, 3.0);
+person.position.copy(defaultPersonPos);
+person.scale.setScalar(1.35);
+person.userData = { isPerson: true, hazard: true };
+person.children.forEach(child => { child.userData.hazard = true; });
+scene.add(person);
+
 const personFillLight = new THREE.PointLight(0xffc58a, 0.7, 4.5);
 personFillLight.position.set(3.8, -0.9, 3.0);
 scene.add(personFillLight);
 
-let personSleepState = 'walking_to_bed';
+let personSleepState = 'idle';
 let personSleepTimer = 0;
 const bedSleepPosition = new THREE.Vector3(-3.0, -1.35, -2.0);
+const walkTarget = new THREE.Vector3(1.0, -2.95, 0.5);
 let bloomFallStarted = false;
 let bloomFallTimer = 0;
 let bloomFallStart = null;
@@ -348,13 +371,42 @@ function updatePersonManual(dt) {
   person.position.x = THREE.MathUtils.clamp(person.position.x, -12.5, 12.5);
   person.position.z = THREE.MathUtils.clamp(person.position.z, -9.5, 9.5);
 }
+
+// Fungsi pergerakan manual (Kekunci I, J, K, L, U, O)
+function updatePersonManual(dt) {
+  const direction = new THREE.Vector3();
+  if (keys['i'] || keys['keyi']) direction.z -= 1;
+  if (keys['k'] || keys['keyk']) direction.z += 1;
+  if (keys['j'] || keys['keyj']) direction.x -= 1;
+  if (keys['l'] || keys['keyl']) direction.x += 1;
+  if (direction.lengthSq() > 0) {
+    direction.normalize();
+    person.position.x += direction.x * 2.0 * dt;
+    person.position.z += direction.z * 2.0 * dt;
+    person.rotation.y = Math.atan2(direction.x, direction.z);
+  }
+  if (keys['u'] || keys['keyu']) person.position.y = Math.min(3.0, person.position.y + 1.2 * dt);
+  if (keys['o'] || keys['keyo']) person.position.y = Math.max(-3.2, person.position.y - 1.2 * dt);
+  
+  person.position.x = THREE.MathUtils.clamp(person.position.x, -12.5, 12.5);
+  person.position.z = THREE.MathUtils.clamp(person.position.z, -9.5, 9.5);
+  personFillLight.position.set(person.position.x, person.position.y + 2.0, person.position.z);
+}
+
+// Fungsi logik tidur, berjalan, dan bangun
 function updatePersonSleep(dt) {
   if (personManualMode) {
     updatePersonManual(dt);
     return;
   }
-  const walkTarget = new THREE.Vector3(1.0, -2.95, 0.5);
-  if (personSleepState === 'walking_to_bed') {
+
+  // 1. Berdiri sahaja (Idle)
+  if (personSleepState === 'idle') {
+    person.rotation.z = 0;
+    personFillLight.position.set(person.position.x, person.position.y + 2.0, person.position.z);
+  } 
+  // 2. Berjalan ke katil secara automatik
+  else if (personSleepState === 'walking_to_bed') {
     const toBed = walkTarget.clone().sub(person.position);
     if (toBed.length() > 0.08) {
       person.position.add(toBed.normalize().multiplyScalar(Math.min(0.65 * dt, toBed.length())));
@@ -363,7 +415,10 @@ function updatePersonSleep(dt) {
       personSleepState = 'getting_into_bed';
       personSleepTimer = 0;
     }
-  } else if (personSleepState === 'getting_into_bed') {
+    personFillLight.position.set(person.position.x, person.position.y + 2.0, person.position.z);
+  } 
+  // 3. Baring di katil
+  else if (personSleepState === 'getting_into_bed') {
     personSleepTimer += dt;
     const progress = Math.min(1, personSleepTimer / 2.5);
     person.position.lerpVectors(walkTarget, bedSleepPosition, progress);
@@ -372,11 +427,14 @@ function updatePersonSleep(dt) {
       personSleepState = 'sleeping';
       personSleepTimer = 0;
     }
-  } else if (personSleepState === 'sleeping') {
+  } 
+  // 4. Keadaan Tidur
+  else if (personSleepState === 'sleeping') {
     personSleepTimer += dt;
     isSleepMode = true;
     person.position.y = bedSleepPosition.y + Math.sin(personSleepTimer * 1.4) * 0.025;
     personFillLight.intensity = 0.55 + Math.sin(personSleepTimer * 1.2) * 0.08;
+    
     if (!bloomFallStarted) {
       bloomFallStarted = true;
       bloomFallTimer = 0;
@@ -387,9 +445,24 @@ function updatePersonSleep(dt) {
     device.position.lerpVectors(bloomFallStart, bloomFallPosition, fallProgress);
     device.position.y += Math.sin(Math.PI * fallProgress) * 1.0;
     device.rotation.z = THREE.MathUtils.lerp(0, Math.PI / 2, fallProgress);
+    
     if (personSleepTimer > 0.4) {
       playBloom = false;
       bloomLight.intensity = Math.max(0.05, bloomLight.intensity - dt * 0.45);
+    }
+  } 
+  // 5. Bangun dari katil dan kembali berdiri
+  else if (personSleepState === 'getting_up') {
+    personSleepTimer += dt;
+    const progress = Math.min(1, personSleepTimer / 2.0);
+    
+    person.position.lerpVectors(bedSleepPosition, defaultPersonPos, progress);
+    person.rotation.z = THREE.MathUtils.lerp(Math.PI / 2, 0, progress);
+    
+    if (progress >= 1) {
+      personSleepState = 'idle';
+      personSleepTimer = 0;
+      bloomFallStarted = false;
     }
   }
 }

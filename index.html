@@ -16,6 +16,40 @@
 </head>
 <body>
   <div id="info">
+   <!-- PANEL HARDWARE & DEPLOYMENT -->
+  <div id="hardware-spec-panel">
+    <div class="hw-title">HARDWARE ARCHITECTURE</div>
+    
+    <div class="hw-grid">
+      <!-- LITE VERSION -->
+      <div class="hw-card">
+        <img src="https://images.unsplash.com/photo-1553406830-ef2513450d76?auto=format&fit=crop&w=300&q=80" alt="ESP32 Board">
+        <div class="hw-card-title">LITE VERSION</div>
+        <div class="hw-price">RM 49 - RM 59</div>
+        <ul class="hw-list">
+          <li><b>MCU:</b> ESP32-C3 - RM 8 - RM 12</li>
+          <li><b>Sensor:</b> ToF Laser/IR - RM 8 - RM 15</li>
+          <li><b>Motor:</b> Servo / Micro DC RM 4 - RM 8</li>
+          <li><b>LED, Buzzer, PCB & Wire</b> - RM 5 - RM 8</li>
+          <li><b>Casing</b> - RM 5 - RM 8</li>
+          <li><b>Code:</b> C++ / Arduino</li>
+        </ul>
+      </div>
+
+      <!-- PRO VERSION -->
+      <div class="hw-card">
+        <img src="https://images.unsplash.com/photo-1629654297299-c8506221ca97?auto=format&fit=crop&w=300&q=80" alt="Raspberry Pi">
+        <div class="hw-card-title">PRO VERSION</div>
+        <div class="hw-price">RM 599 - RM 799</div>
+        <ul class="hw-list">
+          <li><b>SBC:</b> Raspberry Pi 4/5 - RM 150 - RM 300</li>
+          <li><b>Sensor:</b> 360° LiDAR - RM 80 - RM 150</li>
+          <li><b>Motor, Battery, Casing & Driver:</b> High-Torque - RM 80 - RM 200</li>
+          <li><b>Code:</b> Python / ROS 2</li>
+        </ul>
+      </div>
+    </div>
+  </div>
     <b>BLOOMBUD AI - LIDAR SCANNING SIMULATION</b><br>
     Version: <select id="product-mode">
       <option value="pro">Pro - Raspberry Pi + LiDAR</option>
@@ -136,12 +170,107 @@
         transform: scale(0.9);
     }
 
+   /* PANEL HARDWARE SPECIFICATION */
+    #hardware-spec-panel {
+      position: absolute;
+      top: 380px;
+      left: 10px;
+      width: 320px;
+      background: rgba(5, 15, 24, 0.92);
+      border: 1px solid rgba(0, 255, 204, 0.45);
+      border-radius: 8px;
+      padding: 12px;
+      color: #b9fff2;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+      z-index: 10;
+      font-size: 11px;
+    }
+
+    .hw-title {
+      color: #00ffcc;
+      font-weight: bold;
+      font-size: 12px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+      padding-bottom: 4px;
+    }
+
+    .hw-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .hw-card {
+      background: rgba(0, 255, 204, 0.05);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      border-radius: 6px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .hw-card img {
+      width: 100%;
+      height: 65px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      border: 1px solid rgba(0, 255, 204, 0.3);
+    }
+
+    .hw-card-title {
+      color: #ffcc00;
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .hw-price {
+      color: #00ffcc;
+      font-weight: bold;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .hw-list {
+      text-align: left;
+      font-size: 9px;
+      padding-left: 10px;
+      margin: 0;
+      color: #d5e9e7;
+      line-height: 1.3;
+    }
+
     /* Sembunyikan di PC supaya tak semak skrin */
     @media (min-width: 1024px) {
         #mobile-controls { display: none; }
     }
   </style>
   <script src="app.js"></script>
+  <script>
+  let currentHwSlide = 0;
+  const hwSlides = document.querySelectorAll('.hw-slide');
+  const hwSlideNum = document.getElementById('hw-slide-num');
+
+  function showHwSlide(index) {
+    hwSlides.forEach((slide, i) => {
+      slide.classList.remove('active');
+      if (i === index) slide.classList.add('active');
+    });
+    if (hwSlideNum) hwSlideNum.textContent = index + 1;
+  }
+
+  function moveHwSlide(step) {
+    currentHwSlide = (currentHwSlide + step + hwSlides.length) % hwSlides.length;
+    showHwSlide(currentHwSlide);
+  }
+
+  // Pertukaran slide automatik setiap 3.5 saat
+  setInterval(() => {
+    moveHwSlide(1);
+  }, 3500);
+</script>
   
 </body>
 </html>
