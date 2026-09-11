@@ -94,23 +94,33 @@
 
 #mobile-controls {
     position: fixed !important;
-    bottom: 30px !important; /* Jarak dari bawah skrin */
-    left: 30px !important;   /* Jarak dari kiri skrin */
-    z-index: 999999;         /* Nombor sangat besar supaya ia paling depan */
+    bottom: 25px;
+    left: 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 10px;
+    z-index: 999999 !important; /* Memastikan butang sentiasa di atas */
+    touch-action: none; /* Menghalang skrol skrin semasa menekan butang */
 }
 
 .control-btn {
     width: 60px;
     height: 60px;
-    /* Gunakan warna yang lebih kontra supaya nampak di atas background hitam */
-    background: rgba(0, 255, 157, 0.2); 
-    border: 1px solid #00ff9d;
+    background: rgba(0, 255, 204, 0.2);
+    border: 2px solid rgba(0, 255, 204, 0.6);
     border-radius: 50%;
-    color: #00ff9d;
-    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+    color: #00ffcc;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    pointer-events: auto; /* Memastikan acara sentuhan diterima */
 }
 
 .middle-row {
