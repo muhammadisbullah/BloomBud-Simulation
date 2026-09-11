@@ -23,6 +23,11 @@ from fastapi import FastAPI
 import numpy as np
 import websockets
 
+# Tambahkan variabel global untuk menyimpan hitungan
+import asyncpg # Pastikan tambah 'asyncpg' dalam requirements.txt
+import os
+
+
 from lidar_perception import LidarPerception
 from risk_planner import RiskPlanner
 from sleep_detector import SleepDetector
@@ -40,17 +45,13 @@ perception = LidarPerception(eps=0.28, min_samples=2)
 planner = RiskPlanner()
 app = FastAPI()
 
+# KOD UNTUK VIEW STATS (HTTP)
 @app.get("/secret-stats")
 async def get_stats():
     conn = await asyncpg.connect(os.environ.get('DATABASE_URL'))
-    
-    # Sini kita ambil JUMLAH SEBENAR dari database
-    real_count = await conn.fetchval("SELECT count FROM analytics WHERE event_name = 'maybe_later'")
-    
+    val = await conn.fetchval("SELECT count FROM analytics WHERE event_name = 'maybe_later'")
     await conn.close()
-
-    # Kita hantar nilai 'real_count' itu kembali ke browser
-    return {"total": real_count}
+    return {"total_clicks": val if val else 0}
 
 
 class BedtimeController:
@@ -75,9 +76,6 @@ class BedtimeController:
             "bloom_action": action,
         }
 
-# Tambahkan variabel global untuk menyimpan hitungan
-import asyncpg # Pastikan tambah 'asyncpg' dalam requirements.txt
-import os
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
@@ -195,6 +193,16 @@ async def main():
 
 if __name__ == '__main__':
     try:
-        asyncio.run(main())
+        # Kod ini bermaksud: 
+        # Jika ada port dari Render, guna port itu. 
+        # Jika tiada (di komputer anda), guna 8765.
+        port = int(os.environ.get("PORT", 8765))
+        
+        print(f"🚀 Server sedang berjalan...")
+        print(f"   - Lokal: ws://localhost:8765")
+        print(f"   - Render: Port automatik dikesan")
+
+        import uvicorn
+        uvicorn.run(app, host="0.0.0.0", port=port)
     except KeyboardInterrupt:
         print("Server stopped")
