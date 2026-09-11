@@ -247,6 +247,60 @@
     @media (min-width: 1024px) {
         #mobile-controls { display: none; }
     }
+
+    /* PEMBAIKAN KHAS UNTUK SKRIN TABLET & TELEFON */
+@media screen and (max-width: 900px) {
+  html, body {
+    overflow-y: auto !important; /* Benarkan skrol ke bawah pada telefon */
+    height: auto !important;
+  }
+
+  /* Susun panel secara berurutan ke bawah */
+  #info, 
+  #sensor-panel, 
+  #hardware-spec-panel {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: calc(100vw - 32px) !important;
+    margin: 10px auto !important;
+    box-sizing: border-box !important;
+    z-index: 10 !important;
+  }
+
+  /* Elakkan teks panel perkakasan terpotong */
+  .hw-grid {
+    grid-template-columns: 1fr !important; /* Tukar 2 kolum jadi 1 kolum pada skrin sempit */
+  }
+
+  /* Pelarasan saiz canvas sensor */
+  #sensor-canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Kawalan HUD maklumat penerbangan */
+  #hud {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 10px auto 100px auto !important; /* Ruang ekstra di bawah supaya tak tertutup joystick */
+    width: calc(100vw - 32px) !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Tetapkan Joystick di lapisan paling atas & kekal di bawah */
+  #mobile-controls {
+    position: fixed !important;
+    bottom: 15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+  }
+}
   </style>
   <script src="app.js"></script>
   <script>
