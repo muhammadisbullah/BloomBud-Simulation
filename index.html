@@ -61,6 +61,8 @@
     <canvas id="sensor-canvas" width="280" height="190"></canvas>
     <div id="sensor-readout">Waiting for sensor data...</div>
   </div>
+
+  
   
   <div id="hud" style="position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,0.6); color:#fff; padding:8px; border-radius:6px; font-family:monospace; font-size:12px;">
     <div>Altitude: <span id="hud-alt">0.0</span>m</div>
@@ -69,6 +71,17 @@
     <canvas id="hud-canvas" width="220" height="60" style="display:block; margin-top:6px; background:rgba(255,255,255,0.03); border-radius:4px;"></canvas>
     <div style="font-size:10px; opacity:0.8; margin-top:6px;">BloomBud: WASD, R/F | Human: P then I/J/K/L, U/O | C camera</div>
   </div>
+
+
+  
+  <div id="mobile-controls">
+    <button class="control-btn" id="up">▲</button>
+    <div class="middle-row">
+        <button class="control-btn" id="left">◀</button>
+        <button class="control-btn" id="down">▼</button>
+        <button class="control-btn" id="right">▶</button>
+    </div>
+</div>
   <style>
     #sensor-panel {
       position: absolute; top: 14px; right: 14px; width: 300px;
@@ -80,7 +93,52 @@
     .sensor-title { letter-spacing: 1px; color: #00ffcc; margin-bottom: 6px; }
     #sensor-canvas { display: block; width: 280px; height: 190px; background: #07131c; border: 1px solid rgba(120, 220, 210, 0.25); }
     #sensor-readout { margin-top: 7px; line-height: 1.45; color: #d5e9e7; }
+
+        /* TAMBAHKAN KOD DI BAWAH INI */
+    #mobile-controls {
+        position: fixed !important;
+        bottom: 25px;
+        left: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        z-index: 999999; /* Pastikan ia di atas simulasi LiDAR */
+    }
+
+    .middle-row {
+        display: flex;
+        gap: 30px;
+    }
+
+    .control-btn {
+        width: 60px;
+        height: 60px;
+        background: rgba(0, 255, 204, 0.15); /* Ikut tema neon BloomBud */
+        border: 2px solid rgba(0, 255, 204, 0.5);
+        border-radius: 50%;
+        color: #00ffcc;
+        font-size: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        user-select: none;
+        touch-action: manipulation;
+    }
+
+    .control-btn:active {
+        background: rgba(0, 255, 204, 0.4);
+        transform: scale(0.9);
+    }
+
+    /* Sembunyikan di PC supaya tak semak skrin */
+    @media (min-width: 1024px) {
+        #mobile-controls { display: none; }
+    }
   </style>
   <script src="app.js"></script>
+  
 </body>
 </html>

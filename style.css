@@ -92,6 +92,44 @@
     transform: translateY(-2px);
 }
 
+#mobile-controls {
+    position: fixed !important;
+    bottom: 30px !important; /* Jarak dari bawah skrin */
+    left: 30px !important;   /* Jarak dari kiri skrin */
+    z-index: 999999;         /* Nombor sangat besar supaya ia paling depan */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    /* Gunakan warna yang lebih kontra supaya nampak di atas background hitam */
+    background: rgba(0, 255, 157, 0.2); 
+    border: 1px solid #00ff9d;
+    border-radius: 50%;
+    color: #00ff9d;
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+.middle-row {
+    display: flex;
+    gap: 40px; /* Jarak antara butang kiri dan kanan */
+}
+
+.control-btn:active {
+    background: rgba(255, 255, 255, 0.5); /* Warna jadi lebih terang bila ditekan */
+    transform: scale(0.9); /* Kecil sedikit bila ditekan */
+}
+
+/* Sembunyikan butang ini jika dibuka di komputer (Desktop) */
+@media (min-width: 1024px) {
+    #mobile-controls {
+        display: none;
+    }
+}
+
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
