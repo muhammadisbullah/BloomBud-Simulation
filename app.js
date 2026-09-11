@@ -1742,6 +1742,14 @@ document.getElementById('down').addEventListener('touchstart', () => handleMovem
 document.getElementById('left').addEventListener('touchstart', () => handleMovement('left'));
 document.getElementById('right').addEventListener('touchstart', () => handleMovement('right'));
 
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
 // Start the custom animate loop
 animate();
 
