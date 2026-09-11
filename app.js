@@ -1600,6 +1600,56 @@ setupMobileButton('down', 'down');
 setupMobileButton('left', 'left');
 setupMobileButton('right', 'right');
 
+let isSleeping = true; // Status asal: Tidur
+let humanPosition = { x: 0, z: 0 }; // Kedudukan manusia
+
+const sleepStatusSpan = document.getElementById('ai-sleep');
+const toggleSleepBtn = document.getElementById('toggle-sleep-btn');
+
+// Fungsi untuk tukar status tidur/bangun
+toggleSleepBtn.onclick = () => {
+    isSleeping = !isSleeping;
+    
+    if (isSleeping) {
+        sleepStatusSpan.innerText = "human sleeping";
+        sleepStatusSpan.style.color = "#ff4444";
+        toggleSleepBtn.innerText = "WAKE UP ⏰";
+        toggleSleepBtn.style.background = "#ffcc00";
+        console.log("Status: Manusia sedang tidur. Kawalan disekat.");
+    } else {
+        sleepStatusSpan.innerText = "AWAKE & MOVING";
+        sleepStatusSpan.style.color = "#00ffcc";
+        toggleSleepBtn.innerText = "PUT TO SLEEP 💤";
+        toggleSleepBtn.style.background = "#4444ff";
+        toggleSleepBtn.style.color = "white";
+        console.log("Status: Manusia bangun. Pergerakan bebas aktif.");
+    }
+};
+
+// Logik Kawalan (Hanya jalan jika TIDAK tidur)
+function handleMovement(direction) {
+    if (isSleeping) {
+        // Jika tidur, kita abaikan arahan pergerakan
+        console.log("❌ Manusia sedang tidur, tidak boleh bergerak!");
+        return; 
+    }
+
+    // Jika bangun, baru gerakkan kedudukan
+    const speed = 0.5;
+    if (direction === 'up') humanPosition.z -= speed;
+    if (direction === 'down') humanPosition.z += speed;
+    if (direction === 'left') humanPosition.x -= speed;
+    if (direction === 'right') humanPosition.x += speed;
+
+    updateHumanModel(); // Fungsi untuk kemaskini model 3D anda
+}
+
+// Hubungkan dengan Butang Mobile D-Pad anda
+document.getElementById('up').addEventListener('touchstart', () => handleMovement('up'));
+document.getElementById('down').addEventListener('touchstart', () => handleMovement('down'));
+document.getElementById('left').addEventListener('touchstart', () => handleMovement('left'));
+document.getElementById('right').addEventListener('touchstart', () => handleMovement('right'));
+
 // Start the custom animate loop
 animate();
 
