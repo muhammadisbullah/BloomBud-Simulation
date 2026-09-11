@@ -1624,19 +1624,38 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Objek untuk simpan status butang yang sedang ditekan
-const mobileKeys = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
-};
+// // Objek untuk simpan status butang yang sedang ditekan
+// const mobileKeys = {
+//     up: false,
+//     down: false,
+//     left: false,
+//     right: false
+// };
 
-const upBtn = document.getElementById('up');
-upBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    // Panggil fungsi pergerakan 'W' anda di sini
-    moveForward(); 
+// const upBtn = document.getElementById('up');
+// upBtn.addEventListener('touchstart', (e) => {
+//     e.preventDefault();
+//     // Panggil fungsi pergerakan 'W' anda di sini
+//     moveForward(); 
+// });
+
+// Contoh pemetaan kawalan sentuhan untuk mobile
+const buttons = ['up', 'down', 'left', 'right'];
+
+buttons.forEach(id => {
+  const btn = document.getElementById(id);
+  if (btn) {
+    // Gunakan touchstart untuk tindak balas pantas pada telefon/tablet
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Elak konflik skrol/zoom
+      handleMove(id, true); // Panggil fungsi kawalan anda
+    }, { passive: false });
+
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleMove(id, false); // Hentikan pergerakan apabila dilepaskan
+    }, { passive: false });
+  }
 });
 
 // Fungsi untuk daftar event pada setiap butang
