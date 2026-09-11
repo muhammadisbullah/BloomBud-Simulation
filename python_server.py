@@ -18,6 +18,7 @@ Client protocol (JSON over WebSocket):
 import asyncio
 import json
 from collections import defaultdict
+from fastapi import FastAPI
 
 import numpy as np
 import websockets
@@ -37,6 +38,19 @@ states = defaultdict(lambda: {
 
 perception = LidarPerception(eps=0.28, min_samples=2)
 planner = RiskPlanner()
+app = FastAPI()
+
+@app.get("/secret-stats")
+async def get_stats():
+    conn = await asyncpg.connect(os.environ.get('DATABASE_URL'))
+    
+    # Sini kita ambil JUMLAH SEBENAR dari database
+    real_count = await conn.fetchval("SELECT count FROM analytics WHERE event_name = 'maybe_later'")
+    
+    await conn.close()
+
+    # Kita hantar nilai 'real_count' itu kembali ke browser
+    return {"total": real_count}
 
 
 class BedtimeController:
