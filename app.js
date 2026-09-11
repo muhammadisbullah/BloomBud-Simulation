@@ -1551,6 +1551,55 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+// Objek untuk simpan status butang yang sedang ditekan
+const mobileKeys = {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+};
+
+const upBtn = document.getElementById('up');
+upBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    // Panggil fungsi pergerakan 'W' anda di sini
+    moveForward(); 
+});
+
+// Fungsi untuk daftar event pada setiap butang
+function setupMobileButton(id, keyName) {
+    const btn = document.getElementById(id);
+
+    // Mula tekan (Touch Start untuk Mobile, Mouse Down untuk Testing di PC)
+    const startAction = (e) => {
+        e.preventDefault();
+        mobileKeys[keyName] = true;
+        console.log(`Mula bergerak ke ${keyName}`);
+        // Jika anda guna fungsi pergerakan LiDAR, panggil di sini
+        // Contoh: moveForward();
+    };
+
+    // Lepas tekan
+    const stopAction = (e) => {
+        e.preventDefault();
+        mobileKeys[keyName] = false;
+        console.log(`Berhenti bergerak ke ${keyName}`);
+    };
+
+    btn.addEventListener('touchstart', startAction);
+    btn.addEventListener('touchend', stopAction);
+    
+    // Sokongan untuk Mouse (untuk testing di komputer guna mode mobile)
+    btn.addEventListener('mousedown', startAction);
+    btn.addEventListener('mouseup', stopAction);
+}
+
+// Hubungkan ID butang dengan arah
+setupMobileButton('up', 'up');
+setupMobileButton('down', 'down');
+setupMobileButton('left', 'left');
+setupMobileButton('right', 'right');
+
 // Start the custom animate loop
 animate();
 
